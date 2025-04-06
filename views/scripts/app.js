@@ -249,3 +249,50 @@ async function updateNote() {
         handleApiError(error);
     }
 }
+
+async function deleteNote(noteId) {
+    try {
+        await fetchWithAuth(`/api/notes/${noteId}`, {
+            method: 'DELETE'
+        }).then(handleApiResponse);
+
+        loadNotes();
+    } catch (error) {
+        handleApiError(error);
+    }
+}
+
+// Función para resetear el formulario al modo de creación
+function resetFormToCreateMode() {
+    currentEditNoteId = null;
+    
+    // Cambiar el título del modal
+    const modalTitle = document.querySelector('.modal-header h2');
+    if (modalTitle) {
+        modalTitle.textContent = 'Nueva Nota';
+    }
+    
+    // Restaurar el botón de guardar
+    const saveButton = document.querySelector('.note-form .btn-primary');
+    if (saveButton) {
+        saveButton.innerHTML = '<i class="fas fa-save"></i> Guardar Nota';
+        saveButton.onclick = createNote;
+    }
+}
+
+// Estado de los filtros
+let filters = {
+    pinned: false
+};
+
+function applyFiltersToNotes() {
+    const notesList = document.getElementById('notesList');
+    const notes = Array.from(notesList.children);
+
+    notes.forEach(note => {
+        const isPinned = note.getAttribute('data-pinned') === 'true';
+        
+        // Mostrar la nota solo si cumple con el filtro de fijadas
+        note.style.display = !filters.pinned || isPinned ? 'block' : 'none';
+    });
+}
