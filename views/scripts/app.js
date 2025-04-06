@@ -50,3 +50,50 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeUI();
     }
 });
+
+// Inicializar elementos de la UI
+function initializeUI() {
+    // Configurar el avatar del usuario con la inicial
+    setUserInitial();
+    
+    // Configurar el botón de tema
+    setupThemeToggle();
+    
+    // Configurar el modal de notas
+    setupNoteModal();
+    
+    // Inicializar la barra de búsqueda
+    initializeSearch();
+    
+    // Inicializar los filtros
+    setupFilters();
+    
+    // Cargar las notas
+    loadNotes();
+}
+
+// Función para mostrar/ocultar el menú desplegable
+function toggleDropdown(event) {
+    event.stopPropagation();
+    const dropdown = this.querySelector('.dropdown-menu');
+    dropdown.classList.toggle('active');
+}
+
+// Funciones de utilidad
+const handleApiResponse = async (response) => {
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || 'Error en la operación');
+    }
+    return data;
+};
+
+const handleApiError = (error) => {
+    const errorElement = document.getElementById('error-message');
+    if (errorElement) {
+        errorElement.textContent = error.message || 'Error al conectar con el servidor';
+        errorElement.style.display = 'block';
+    } else {
+        alert(error.message || 'Error al conectar con el servidor');
+    }
+};
