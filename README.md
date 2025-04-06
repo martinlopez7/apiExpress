@@ -23,7 +23,7 @@ Una aplicación moderna de notas que permite a los usuarios crear, gestionar y o
 1. Clona el repositorio:
 ```bash
 git clone [URL del repositorio]
-cd notes-app
+cd apiExpress
 ```
 
 2. Instala las dependencias:
