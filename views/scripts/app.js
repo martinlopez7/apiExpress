@@ -97,3 +97,155 @@ const handleApiError = (error) => {
         alert(error.message || 'Error al conectar con el servidor');
     }
 };
+
+async function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/login.html';
+        return;
+    }
+
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+
+    const response = await fetch(url, {
+        ...options,
+        headers
+    });
+
+    if (response.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+        return;
+    }
+
+    return response;
+}
+
+// Funciones de notas
+async function createNote() {
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+    const isPinned = document.getElementById('isPinned').checked;
+    const date = new Date();
+
+    try {
+        await fetchWithAuth('/api/notes', {
+            method: 'POST',
+            body: JSON.stringify({ 
+                title, 
+                description, 
+                tags, 
+                isPinned,
+                date 
+            })
+        }).then(handleApiResponse);
+
+        clearForm();
+        loadNotes();
+        
+        // Cerrar el modal después de crear la nota
+        const noteModal = document.getElementById('noteModal');
+        if (noteModal) {
+            noteModal.classList.remove('active');
+        }
+    } catch (error) {
+        handleApiError(error);
+    }
+}
+
+function clearForm() {
+    document.getElementById('title').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('tags').value = '';
+    document.getElementById('isPinned').checked = false;
+}
+
+let currentEditNoteId = null;
+
+// Función para editar una nota
+function editNote(noteId) {
+    currentEditNoteId = noteId;
+    
+    // Obtener la nota del DOM
+    const noteElement = document.querySelector(`.note[data-id="${noteId}"]`);
+    if (!noteElement) return;
+    
+    const title = noteElement.querySelector('.note-title').textContent;
+    const description = noteElement.querySelector('p').textContent;
+    
+    // Obtener las etiquetas (si existen)
+    let tags = [];
+    const tagsElement = noteElement.querySelector('small');
+    if (tagsElement && tagsElement.textContent.trim()) {
+        tags = tagsElement.textContent.split(',').map(tag => tag.trim());
+    }
+    
+    // Verificar si la nota está fijada
+    const isPinned = noteElement.classList.contains('pinned');
+    
+    // Llenar el formulario con los datos de la nota
+    document.getElementById('title').value = title;
+    document.getElementById('description').value = description;
+    document.getElementById('tags').value = tags.join(', ');
+    document.getElementById('isPinned').checked = isPinned;
+    
+    // Abrir el modal
+    const noteModal = document.getElementById('noteModal');
+    if (noteModal) {
+        noteModal.classList.add('active');
+    }
+    
+    // Cambiar el título del modal
+    const modalTitle = document.querySelector('.modal-header h2');
+    if (modalTitle) {
+        modalTitle.textContent = 'Editar Nota';
+    }
+    
+    // Cambiar el botón de guardar por uno de actualizar
+    const saveButton = document.querySelector('.note-form .btn-primary');
+    if (saveButton) {
+        saveButton.innerHTML = '<i class="fas fa-save"></i> Actualizar Nota';
+        saveButton.onclick = updateNote;
+    }
+}
+
+async function updateNote() {
+    if (!currentEditNoteId) return;
+
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+    const isPinned = document.getElementById('isPinned').checked;
+
+    try {
+        await fetchWithAuth(`/api/notes/${currentEditNoteId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ 
+                title, 
+                description, 
+                tags, 
+                isPinned 
+            })
+        }).then(handleApiResponse);
+
+        // Cerrar el modal
+        const noteModal = document.getElementById('noteModal');
+        if (noteModal) {
+            noteModal.classList.remove('active');
+        }
+        
+        // Resetear el formulario y el modo
+        clearForm();
+        resetFormToCreateMode();
+        
+        // Recargar las notas
+        loadNotes();
+    } catch (error) {
+        handleApiError(error);
+    }
+}
