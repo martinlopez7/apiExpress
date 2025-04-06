@@ -1,18 +1,97 @@
-# Hola a todos 
+# Notes App
 
-## Por este medio se orienta la actividad colaborativa "Api-Express", a partir de una plantilla dada por el profesor. La actividad consiste en:
+Una aplicación moderna de notas que permite a los usuarios crear, gestionar y organizar sus notas de manera eficiente y segura.
 
-1) Los equipos desarrollaran un api utilizando Express y MongoDb.
+## 🚀 Tecnologías Utilizadas
 
-2) Cada equipo debe tener su proyecto en GitHub para trabajar de forma colaborativa.
+- **Node.js** - Entorno de ejecución para JavaScript
+- **Express** - Framework web para Node.js
+- **MongoDB** con Mongoose - Base de datos NoSQL y ODM
+- **JWT** - Autenticación basada en tokens
+- **bcryptjs** - Encriptación de contraseñas
+- **CORS** - Middleware para habilitar Cross-Origin Resource Sharing
+- **dotenv** - Gestión de variables de entorno
 
-3) El proyecto debe utilizar las ramas de GitHub para conferir tareas a cada estudiante de forma individual. Dicho de otra forma, cada estudiante es responsable de una parte del proyecto y recibirá una nota por esa parte.
+## 🛠️ Requisitos Previos
 
-4) El proyecto debe incorporar todos los elementos dados en clases hasta el 27 de marzo. 
+- Node.js (versión 14 o superior)
+- MongoDB instalado y en ejecución (opcional)
+- npm como gestor de paquetes
 
-5) La nota principal se centrará en el trabajo con la base de datos, colecciones, agregaciones, índices, relaciones, etc
-   (8 puntos)
-6) Se valorará también la inclusión de elementos avanzados de desarrollo, como utilización de css en vistas, interfaces gráficas y otros elementos de desarrollo aprendidos en otras asignaturas. Este contenido integrador se valorará con dos puntos adicionales.
-(2 puntos)
-7) La entrega del proyecto se realizará por el campus virtual  mediante un documento  .txt que contenga el enlace al proyecto en GitHub de forma tal que el profesor tenga los accesos para revisarlo en la plataforma del equipo. 
+## 🔧 Instalación
 
+1. Clona el repositorio:
+```bash
+git clone [URL del repositorio]
+cd notes-app
+```
+
+2. Instala las dependencias:
+```bash
+npm install
+```
+
+3. Configura las variables de entorno:
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+```env
+MONGODB_URI=tu_connectionString_de_mongodb
+JWT_SECRET=tu_clave_secreta
+PORT=3000
+```
+
+> **Nota sobre JWT_SECRET**: 
+> - Longitud mínima recomendada: 32 caracteres
+> - Debe ser única y difícil de adivinar
+> - No usar palabras del diccionario
+> - No compartir ni exponer este valor
+> - En producción, se recomienda usar un generador de claves seguras
+> - Se recomienda usar una combinación de letras (mayúsculas y minúsculas), números y caracteres especiales.
+
+> **Nota sobre MONGODB_URI**: 
+> - Si tienes MongoDB instalado utiliza tu connection string local
+> - Si no tienes MongoDB instalado, hay una base de datos de Atlas, simplemente pega esto para conectarte a ella: *mongodb+srv://usuario:6MNFAlyToeGgXDa5@cluster0.hnykk.mongodb.net/notesdb?retryWrites=true&w=majority&appName=Cluster0*
+
+
+## 🚀 Ejecución
+
+Para desarrollo:
+```bash
+npm run dev
+```
+
+Para producción:
+```bash
+npm start
+```
+
+Navegar a: localhost:3000
+
+## 📝 Características
+
+- Autenticación de usuarios
+- CRUD completo de notas
+- Organización por categorías
+- API RESTful
+- Seguridad mediante JWT
+- Encriptación de datos sensibles
+
+## 🔐 Endpoints de la API
+
+### Autenticación
+- POST /api/auth/register - Registro de usuarios
+- POST /api/auth/login - Inicio de sesión
+
+### Notas
+- GET /api/notes - Obtener todas las notas
+- POST /api/notes - Crear nueva nota
+- GET /api/notes/:id - Obtener nota específica
+- PUT /api/notes/:id - Actualizar nota
+- DELETE /api/notes/:id - Eliminar nota
+
+## 👥 Contribución
+
+Las contribuciones son bienvenidas. Por favor, abre un issue primero para discutir los cambios que te gustaría realizar.
+
+## 📄 Licencia
+
+ISC
